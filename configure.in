@@ -14,7 +14,7 @@ case $PLARCH in
 	;;
 esac
 
-AC_CHECK_HEADERS(malloc.h unistd.h sys/time.h fcntl.h floatingpoint.h)
+AC_CHECK_HEADERS(malloc.h unistd.h ctype.h sys/time.h fcntl.h floatingpoint.h)
 AC_CHECK_FUNCS(mmap strerror)
 
 AC_OUTPUT(Makefile)

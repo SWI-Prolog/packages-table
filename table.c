@@ -47,6 +47,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#endif
+#ifdef HAVE_CTYPE_H
 #include <ctype.h>
 #endif
 #ifdef HAVE_ALLOCA_H
@@ -105,7 +107,7 @@ open_table(+File, +Fields, +Options, -Handle)
 				32 (space), implying all blank
 				space.
 
- 		sorted(Field)
+		sorted(Field)
 				Defines the file is sorted in the
 				specified field name.  In this
 				case lookup will exploit binary
@@ -178,7 +180,7 @@ init_constants()
   ATOM_exact			= PL_new_atom("exact");
   ATOM_field			= PL_new_atom("field");
   ATOM_field_count		= PL_new_atom("field_count");
-  ATOM_field_separator  	= PL_new_atom("field_separator");
+  ATOM_field_separator		= PL_new_atom("field_separator");
   ATOM_file			= PL_new_atom("file");
   ATOM_float			= PL_new_atom("float");
   ATOM_functor			= PL_new_atom("functor");
@@ -187,8 +189,8 @@ init_constants()
   ATOM_key_field		= PL_new_atom("key_field");
   ATOM_map_space_to_underscore	= PL_new_atom("map_space_to_underscore");
   ATOM_prefix			= PL_new_atom("prefix");
-  ATOM_record	        	= PL_new_atom("record");
-  ATOM_record_separator 	= PL_new_atom("record_separator");
+  ATOM_record			= PL_new_atom("record");
+  ATOM_record_separator		= PL_new_atom("record_separator");
   ATOM_size			= PL_new_atom("size");
   ATOM_skip			= PL_new_atom("skip");
   ATOM_sorted			= PL_new_atom("sorted");
@@ -868,7 +870,7 @@ unify_field_info(term_t t, Field field)	/* name(Type, Flags) */
 			  PL_TERM, flags));
   } else
   { return PL_unify_term(t, PL_FUNCTOR, PL_new_functor(field->name, 1),
-			  	PL_ATOM, type);
+				PL_ATOM, type);
 
   }
 }
@@ -1054,7 +1056,7 @@ start_of_record(+Table, +From, +To, -StartOfRecord)
 
 static foreign_t
 pl_start_of_record(term_t handle,		/* table */
-		   term_t from, term_t to, 	/* range  */
+		   term_t from, term_t to,	/* range  */
 		   term_t recstart,		/* return */
 		   control_t control)		/* backtracking control */
 { Table table;

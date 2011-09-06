@@ -47,7 +47,7 @@ static char *
 winerror(int id)
 { char *msg;
   static WORD lang;
-  static lang_initialised = 0;
+  static int lang_initialised = 0;
 
   if ( !lang_initialised )
     lang = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_UK);
