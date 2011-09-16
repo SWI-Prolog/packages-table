@@ -12,6 +12,7 @@ PLARCH=@PLARCH@
 PKGDOC=$(PLBASE)/doc/packages
 PCEHOME=../xpce
 SO=@SO@
+SOLIB=@SOLIB@
 
 CC=@CC@
 COFLAGS=@COFLAGS@
@@ -49,7 +50,7 @@ table.@SO@:	$(OBJ)
 
 install:	$(TARGETS) $(LIBPL)
 		mkdir -p $(DESTDIR)$(PLBASE)/lib/$(INSTALL_PLARCH)
-		$(INSTALL) -m 755 $(TARGETS) $(DESTDIR)$(PLBASE)/lib/$(INSTALL_PLARCH)
+		$(INSTALL) -m 755 $(TARGETS) $(DESTDIR)$(PLBASE)/$(SOLIB)/$(INSTALL_PLARCH)
 		$(INSTALL_DATA) $(LIBPL) $(DESTDIR)$(PLBASE)/library
 		$(PL) -f none -g make -t halt
 
