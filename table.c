@@ -1780,8 +1780,13 @@ execute_binary_search(Query q)
 	continue;
       }
       case MATCH_LT:
-      { high = here;
-	here = find_start_of_record(t, (low+high)/2);
+      { table_offset_t rc;
+	table_offset_t mid = (low+high)/2;
+
+	high = here;
+	while((rc=find_start_of_record(t, mid) == here) && mid > low)
+	  mid--;
+	here = rc;
 	DEBUG(Sdprintf("<, %d %d %d\n", low, here, high));
 	goto next;
       }
