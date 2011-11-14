@@ -415,13 +415,15 @@ get_char(term_t t, int *chr)
 
 static foreign_t
 pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
-{ Table table = malloc(sizeof(struct tabletag));	/* table to create */
+{ Table table = malloc(sizeof(*table));	/* table to create */
   field fields[MAXFIELDS];		/* scratch field structures */
   int   nfields=0;			/* # collected fields */
   int   defarg=1;			/* default argument */
   term_t tail = PL_copy_term_ref(columns); /* for enumerating lists */
   term_t head = PL_new_term_ref();	/* scratch list-head */
   term_t arg  = PL_new_term_ref();	/* scratch argument */
+
+  memset(table, 0, sizeof(*table));
 
   table->record_functor = 0;		/* not filled */
   table->keyfield = -1;
@@ -595,7 +597,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
 
 static int
 open_table(Table table)
-{ if ( !table->buffer )
+{ if ( !table->opened )
   {
 #ifdef __WINDOWS__
     BY_HANDLE_FILE_INFORMATION info;
@@ -615,25 +617,28 @@ open_table(Table table)
 
     table->size = info.nFileSizeLow;
 
-    table->hmap = CreateFileMapping(table->hfile,
-				    NULL,
-				    PAGE_READONLY,
-				    0L,
-				    (DWORD)table->size, /* Truncated? */
-				    NULL);
-    if ( !table->hmap )
-      goto errio;
+    if ( table->size > 0 )
+    { table->hmap = CreateFileMapping(table->hfile,
+				      NULL,
+				      PAGE_READONLY,
+				      0L,
+				      (DWORD)table->size, /* Truncated? */
+				      NULL);
+      if ( !table->hmap )
+	goto errio;
 
-    table->buffer = MapViewOfFile(table->hmap,
-				  FILE_MAP_READ,
-				  0L, 0L, /* offset */
-				  0L);	/* size (0=all) */
+      table->buffer = MapViewOfFile(table->hmap,
+				    FILE_MAP_READ,
+				    0L, 0L, /* offset */
+				    0L);	/* size (0=all) */
 
-    if ( !table->buffer )
-      goto errio;
+      if ( !table->buffer )
+	goto errio;
+    }
 
     table->window      = table->buffer;
     table->window_size = table->size;
+    table->opened      = TRUE;
 
     return TRUE;
 
@@ -667,16 +672,18 @@ open_table(Table table)
       goto errio;
 
     table->size = buf.st_size;
-
-    if ( (table->buffer = mmap(NULL, table->size,
-			       PROT_READ, MAP_SHARED|MAP_NORESERVE,
-			       table->fd, 0)) == (char *) -1 )
-      goto errio;
+    if ( table->size > 0 )
+    { if ( (table->buffer = mmap(NULL, table->size,
+				 PROT_READ, MAP_SHARED|MAP_NORESERVE,
+				 table->fd, 0)) == (char *) -1 )
+	goto errio;
+    }
     close(table->fd);
     table->fd = -1;
 
     table->window      = table->buffer;
     table->window_size = table->size;
+    table->opened      = TRUE;
 
     return TRUE;
 
@@ -903,8 +910,6 @@ pl_close_table(term_t handle)
       CloseHandle(table->hmap);
     if ( table->hfile )
       CloseHandle(table->hfile);
-    table->size   = -1;
-    table->buffer = NULL;
     table->hfile  = NULL;
     table->hmap   = NULL;
 #endif
@@ -913,11 +918,13 @@ pl_close_table(term_t handle)
       munmap(table->buffer, table->size);
     if ( table->fd >= 0 )
       close(table->fd);
-    table->size   = -1;
-    table->buffer = NULL;
     table->fd     = -1;
 #endif
+
+    table->size   = -1;
+    table->buffer = NULL;
     table->window = NULL;
+    table->opened = FALSE;
   }
 
   PL_succeed;

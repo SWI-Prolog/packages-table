@@ -25,7 +25,7 @@
 #ifndef _TABLE_H_INCLUDED
 #define _TABLE_H_INCLUDED
 
-#define TABLE_VERSION "1.2.2"
+#define TABLE_VERSION "1.2.3"
 
 #include <SWI-Prolog.h>
 #include "order.h"
@@ -69,7 +69,7 @@ typedef struct fieldtag
 typedef struct tabletag
 { int		magic;			/* TABLE_MAGIC */
   atom_t	file;			/* name of the file */
-  int 		nfields;		/* # fields in the table */
+  int		nfields;		/* # fields in the table */
   Field		fields;			/* field description terms */
   int		keyfield;		/* 0-based index of key (or -1) */
   int		record_sep;		/* record separator */
@@ -79,6 +79,7 @@ typedef struct tabletag
   functor_t	record_functor;		/* functor for record */
   char	       *window;			/* pointer to the current window */
   size_t        window_size;		/* size of the current window */
+  int		opened;
   char	       *buffer;			/* buffer for the file */
   size_t	size;			/* size of the `window' */
 #ifdef __WINDOWS__
@@ -112,7 +113,7 @@ typedef struct fieldquerytag
   } value;
   size_t	length;			/* length of string */
   OrdTable	ord;			/* ordering table */
-  int 		flags;
+  int		flags;
 } queryfield, *QueryField;
 
 typedef struct querytag
