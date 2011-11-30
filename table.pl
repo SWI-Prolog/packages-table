@@ -47,7 +47,8 @@
 	    compare_strings/4,
 	    prefix_string/3,
 	    prefix_string/4,
-	    sub_string/3
+	    sub_string/3,
+	    table_version/2		% -Version, -CompiledDate
 	  ]).
 
 :- use_foreign_library(foreign(table)).
