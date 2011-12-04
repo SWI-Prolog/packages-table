@@ -4,39 +4,11 @@
 # Copyright: Same as SWI-Prolog: GPL+LGPL
 ################################################################
 
-.SUFFIXES: .tex .dvi .doc .pl
-
-PL=@PL@
-PLBASE=@PLBASE@
-PLARCH=@PLARCH@
-PKGDOC=$(PLBASE)/doc/packages
-PCEHOME=../xpce
-SO=@SO@
-SOLIB=@SOLIB@
-
-CC=@CC@
-COFLAGS=@COFLAGS@
-CWFLAGS=@CWFLAGS@
-CMFLAGS=@CMFLAGS@
-CIFLAGS=-I.
-CFLAGS=$(COFLAGS) $(CWFLAGS) $(CMFLAGS) $(CIFLAGS) @DEFS@
-
-DOCTOTEX=$(PCEHOME)/bin/doc2tex
-PLTOTEX=$(PCEHOME)/bin/pl2tex
-LATEX=latex
+PACKAGE=table
 DOC=table
-TEX=$(DOC).tex
-DVI=$(DOC).dvi
-PDF=$(DOC).pdf
-RUNTEX=../../man/runtex
+include ../Makefile.defs
 
-LD=@LD@
-LDFLAGS=@LDSOFLAGS@
-
-INSTALL=@INSTALL@
-INSTALL_PROGRAM=@INSTALL_PROGRAM@
-INSTALL_DATA=@INSTALL_DATA@
-INSTALL_PLARCH=@INSTALL_PLARCH@
+CFLAGS+= -I.
 
 LIBPL=		table.pl table_util.pl
 TARGETS=	table.@SO@
@@ -46,12 +18,12 @@ OBJ=		table.o order.o error.o
 all:		$(TARGETS)
 
 table.@SO@:	$(OBJ)
-		$(LD) $(LDFLAGS) -o $@ $(OBJ)
+		$(LD) $(LDSOFLAGS) -o $@ $(OBJ)
 
 install:	$(TARGETS) $(LIBPL)
-		mkdir -p $(DESTDIR)$(PLBASE)/lib/$(INSTALL_PLARCH)
-		$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(PLBASE)/$(SOLIB)/$(INSTALL_PLARCH)
-		$(INSTALL_DATA) $(LIBPL) $(DESTDIR)$(PLBASE)/library
+		mkdir -p $(DESTDIR)$(SOLIBDIR)
+		$(INSTALL_PROGRAM) $(TARGETS) $(DESTDIR)$(SOLIBDIR)
+		$(INSTALL_DATA) $(LIBPL) $(DESTDIR)$(PLLIBDIR)
 		$(PL) -f none -g make -t halt
 
 ln-install::
@@ -63,41 +35,17 @@ ln-install::
 rpm-install:	install
 
 pdf-install::
-		mkdir -p $(DESTDIR)$(PKGDOC)
-		$(INSTALL_DATA) $(DOC).pdf $(DESTDIR)$(PKGDOC)
+		mkdir -p $(DESTDIR)$(PKGDOCDIR)
+		$(INSTALL_DATA) $(DOC).pdf $(DESTDIR)$(PKGDOCDIR)
 
 html-install::
-		mkdir -p $(DESTDIR)$(PKGDOC)
-		$(INSTALL_DATA) $(DOC).html $(DESTDIR)$(PKGDOC)
+		mkdir -p $(DESTDIR)$(PKGDOCDIR)
+		$(INSTALL_DATA) $(DOC).html $(DESTDIR)$(PKGDOCDIR)
 
 uninstall:
-		(cd $(PLBASE)/lib/$(INSTALL_PLARCH) && rm -f $(TARGETS))
-		(cd $(PLBASE)/library && rm -f $(LIBPL))
+		(cd $(SOLIBDIR) && rm -f $(TARGETS))
+		(cd $(PLLIBDIR) && rm -f $(LIBPL))
 		$(PL) -f none -g make -t halt
-
-################################################################
-# Documentation
-################################################################
-
-pdf:		$(PDF)
-
-$(DVI):		$(TEX)
-		$(RUNTEX) $(DOC)
-
-$(PDF):		$(TEX)
-		$(RUNTEX) --pdf $(DOC)
-
-html:		$(TEX)
-		latex2html $(DOC)
-		mv html/index.html table.html
-		rm -r html
-
-$(TEX):		$(DOCTOTEX)
-
-.doc.tex:
-		$(DOCTOTEX) $*.doc > $*.tex
-.pl.tex:
-		$(PLTOTEX) $*.pl > $*.tex
 
 ################################################################
 # Check
