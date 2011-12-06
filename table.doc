@@ -3,8 +3,8 @@
 \usepackage{html}
 
 \onefile
-\htmloutput{html}				% Output directory
-\htmlmainfile{index}				% Main document file
+\htmloutput{.}					% Output directory
+\htmlmainfile{table}				% Main document file
 \bodycolor{white}				% Page colour
 
 \begin{document}
@@ -86,9 +86,9 @@ destroying the access to external database tables.
     \begin{tabular}{|l|p{3in}|}
     \hline
     \tt integer		& Convert to a Prolog integer.  The input is
-    			  treated as a decimal number. \\
+			  treated as a decimal number. \\
     \tt hexadecimal	& Convert to a Prolog integer.  The input is
-    			  treated as a hex number. \\
+			  treated as a hex number. \\
     \tt float		& Convert to a Prolog floating point number.
 			  The input is handled by the C-library function
 			  {\tt strtod()}. \\
@@ -106,20 +106,20 @@ destroying the access to external database tables.
     \begin{tabular}{|l|p{3in}|}
     \hline
     \tt sorted		& The field is strictly sorted, but may have
-    			  (adjacent) duplicate entries.  If the field
+			  (adjacent) duplicate entries.  If the field
 			  is textual, it should be sorted
 			  alphabetically, otherwise it should be sorted
 			  numerically. \\
     \tt sorted(+\arg{Table}) & The (textual) field is sorted using the
-    			  ordering declared by the named {\em ordering
+			  ordering declared by the named {\em ordering
 			  table}.  This option may be used to define
 			  reverse order, `dictionary' order or other
 			  irregular alphabetical ordering. See
 			  new_order_table/2. \\
     \tt unique		& This column has distinct values for each
-    			  row in the table.  \\
+			  row in the table.  \\
     \tt downcase	& Map all uppercase in the field to lowercase
-    			  before converting to a Prolog atom, string or
+			  before converting to a Prolog atom, string or
 			  code_list. \\
     \tt map_space_to_underscore & Map spaces to underscores before
 			  converting to a Prolog atom, string or
@@ -149,10 +149,10 @@ destroying the access to external database tables.
     \begin{tabular}{|l|p{3in}|}
     \hline
     \tt record_separator(+\arg{Code}) & Character ({\sc ascii}) value
-    			  of the character separating two records.
+			  of the character separating two records.
 			  Default is the newline ({\sc ascii} 10). \\
     \tt field_separator(+\arg{Code}) &  Character ({\sc ascii}) value
-    			  of the character separating two fields in
+			  of the character separating two fields in
 			  a record. Default is the space ({\sc ascii}
 			  32), which also has a special meaning.  Two
 			  fields separated by a space may be separated
@@ -223,7 +223,7 @@ predicates below allow for finding records in the file.
 
     \begin{tabular}{lp{3in}}
     \tt file	& Unify value with the name of the file with which
-		  the table is associated. \\    
+		  the table is associated. \\
     \tt field(\arg{N}) &
 		  Unify value with declaration of n-th (1-based) field. \\
     \tt field_separator &
@@ -339,7 +339,7 @@ fields from a record.
     backtracking will yield further solutions to the query.
 
     in_table/3 may be comfortable used to bind the table transparently
-    to a predicate. For example, we have a file with lines of the 
+    to a predicate. For example, we have a file with lines of the
     format.\footnote{This is the {\tt disproot.dat} table from the
 		     {\sc aat} database used in {\sc grasp}}
 
@@ -359,7 +359,7 @@ fields from a record.
     idtable(Handle) :-
             stored_idtable_handle(Handle).
     idtable(Handle) :-
-    	    new_table('disproot.dat',
+	    new_table('disproot.dat',
 		      [ id(atom, [downcase, sorted, unique]),
 			name(atom)
 		      ],
@@ -408,10 +408,10 @@ defined:
 ignore &	Characters of the ignore set are simple discarded from
 		the input. \\
 break &		Characters from the break set are treated as word-breaks,
- 		and each non-empty sequence of them is considered equal.
+		and each non-empty sequence of them is considered equal.
 		A word break precedes a normal character. \\
 tag &		Characters of type tag indicate the start of a `tag'
- 		that should not be considered in ordering, unless both
+		that should not be considered in ordering, unless both
 		strings are the same upto the tag. \\
 \hline
 \end{tabular}
