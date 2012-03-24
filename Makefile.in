@@ -18,7 +18,7 @@ OBJ=		table.o order.o error.o
 all:		$(TARGETS)
 
 table.@SO@:	$(OBJ)
-		$(LD) $(LDSOFLAGS) -o $@ $(OBJ)
+		$(LD) -o $@ $(OBJ) $(LDSOFLAGS)
 
 install:	$(TARGETS) $(LIBPL)
 		mkdir -p $(DESTDIR)$(SOLIBDIR)
