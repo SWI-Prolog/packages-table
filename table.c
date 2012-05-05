@@ -74,7 +74,7 @@
 #endif
 
 #undef offsetof
-#define offsetof(t, f) ((long)&(((t*)0)->f))
+#define offsetof(t, f) ((intptr_t)&(((t*)0)->f))
 
 #define sizeofquery(t) offsetof(query, field[t->nfields])
 
@@ -591,7 +591,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   table->fd     = -1;
 #endif
 
-  return PL_unify_integer(handle, (long)table);
+  return PL_unify_integer(handle, (intptr_t)table);
 }
 
 

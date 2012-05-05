@@ -90,7 +90,7 @@ strerror(int err)
 
 
 int
-error_func(int type, const char *pred, int argi, long argl)
+error_func(int type, const char *pred, int argi, intptr_t argl)
 { switch(type)
   { case ERR_INSTANTIATION:
     { char buf[1024];

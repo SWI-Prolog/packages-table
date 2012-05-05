@@ -28,9 +28,9 @@
 #define ERR_INSTANTIATION 1		/* general badly typed argument */
 #define ERR_IO	          2		/* general IO error */
 
-#define error(a,b,c,d) error_func(a,b,c,(long)(d))
+#define error(a,b,c,d) error_func(a,b,c,(intptr_t)(d))
 
-extern int	error_func(int type, const char *pred, int argi, long argl);
+extern int	error_func(int type, const char *pred, int argi, intptr_t argl);
 
 #endif /*_ERROR_H_INCLUDED*/
 
