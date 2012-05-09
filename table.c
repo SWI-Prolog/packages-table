@@ -1904,7 +1904,7 @@ rebind_query_vars(Query q, term_t from)
 
 static Query
 make_query(Table t, term_t from)
-{ int sizeq = sizeofquery(t);
+{ size_t sizeq = sizeofquery(t);
   Query q = malloc(sizeq);
   term_t tail = PL_copy_term_ref(from);
   term_t head = PL_new_term_ref();
