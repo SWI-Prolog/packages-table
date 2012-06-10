@@ -9,6 +9,7 @@ DOC=table
 include ../Makefile.defs
 
 CFLAGS+= -I.
+LIBS=@LIBS@
 
 LIBPL=		table.pl table_util.pl
 TARGETS=	table.@SO@
@@ -18,7 +19,7 @@ OBJ=		table.o order.o error.o
 all:		$(TARGETS)
 
 table.@SO@:	$(OBJ)
-		$(LD) -o $@ $(OBJ) $(LDSOFLAGS)
+		$(LD) $(LDSOFLAGS) -o $@ $(OBJ) $(LIBS)
 
 install:	$(TARGETS) $(LIBPL)
 		mkdir -p $(DESTDIR)$(SOLIBDIR)
