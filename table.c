@@ -266,7 +266,7 @@ format_error(const char *pred, size_t pos, Field f)
   sprintf(buf, "%s: bad record, field %d (%s), char-index %ld",
 	  pred, f->index, PL_atom_chars(f->name), (long)pos);
 
-  return PL_warning(buf);
+  return PL_representation_error(buf);
 }
 
 
@@ -379,14 +379,12 @@ get_field_flag(atom_t name, term_t arg, Field field)
 }
 
 
-static void
+static int
 default_escape_table(Table t)
 { int i;
 
   if ( !(t->escape_table = malloc(256)) )
-  { PL_warning("Not enough memory");
-    return;
-  }
+    return PL_resource_error("memory");
 
   for(i=0; i<256; i++)
     t->escape_table[i] = i;
@@ -398,6 +396,8 @@ default_escape_table(Table t)
     t->escape_table['r'] = '\r';
     t->escape_table['t'] = '\t';
   }
+
+  return TRUE;
 }
 
 
@@ -521,7 +521,10 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
       if ( !PL_get_integer(arg, &table->escape) )
 	goto err3;
 
-      default_escape_table(table);
+      if ( !default_escape_table(table) )
+      { free(table);
+	return FALSE;
+      }
       _PL_get_arg(2, head, tail2);
       while(PL_get_list(tail2, head2, tail2))
       { atom_t name;
