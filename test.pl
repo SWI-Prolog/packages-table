@@ -10,7 +10,7 @@
 	 ]).
 
 bug(R) :-
-	compare_strings(aat_new, 'nootèone', 'nootètwo', R).
+	compare_strings(aat_new, 'noot\u00e8one', 'noot\u00e8two', R).
 
 
 
