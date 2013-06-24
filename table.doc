@@ -46,6 +46,7 @@ many more modern Unices).
 \newpage
 
 \section{Introduction}
+\label{sec:table-intro}
 
 Prolog programs sometimes need access to large sets of background data.
 For example in the {\sc grasp} project we need access to ontologies of
@@ -63,8 +64,10 @@ The following sections define the interface predicates for the package.
 \Secref{example} provides an example to access the Unix password file.
 
 \section{Managing external tables}
+\label{sec:table-external}
 
 \subsection{Creating and destroying tables}
+\label{sec:table-create-destroy}
 
 This section describes the predicates required for creating and
 destroying the access to external database tables.
@@ -208,10 +211,12 @@ destroying the access to external database tables.
 \end{description}
 
 \subsection{Accessing a table}
+\label{sec:table-access}
 
 This section describes the predicates to read data from a table.
 
 \subsubsection{Finding record locations in a table}
+\label{sec:table-find-record-location}
 
 Records are addressed by their offset in the table (file). As records
 have generally non-fixed length, searching is often required.  The
@@ -257,6 +262,7 @@ predicates below allow for finding records in the file.
 \end{description}
 
 \subsubsection{Reading records}
+\label{sec:table-read-record}
 
 There are two predicates for reading records. The read_table_record/4
 reads an entire record, while read_table_fields/4 reads one or more
@@ -285,6 +291,7 @@ fields from a record.
 \end{description}
 
 \subsubsection{Searching the table}
+\label{sec:table-search}
 
 \begin{description}
 \predicate{in_table}{3}{+Handle, ?Fields, -RecordPos}
@@ -374,6 +381,7 @@ fields from a record.
 \end{description}
 
 \subsubsection{Miscellaneous}
+\label{sec:table-misc}
 
 \begin{description}
     \predicate{table_version}{2}{-Version, -CompileDate}
@@ -382,6 +390,7 @@ package, and \arg{CompileDate} with the date this package was compiled.
 \end{description}
 
 \section{Flexible ordering and equivalence based on character table}
+\label{sec:table-ordering}
 
 This package was developed as part of the {\sc grasp} project, where it
 is used for browsing lexical and ontology information, which is normally
