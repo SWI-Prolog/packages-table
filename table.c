@@ -436,7 +436,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   }
 
   while(PL_get_list(tail, head, tail))
-  { int arity;
+  { size_t arity;
     atom_t typename;
 
     if ( !PL_get_name_arity(head, &fields[nfields].name, &arity) ||
@@ -463,7 +463,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
       _PL_get_arg(2, head, tail2);
       while(PL_get_list(tail2, head2, tail2))
       { atom_t a;
-	int optarity;
+	size_t optarity;
 
 	if ( PL_get_name_arity(head2, &a, &optarity) )
 	{ if ( optarity == 1 )
@@ -508,7 +508,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   PL_put_term(tail, options);
   while(PL_get_list(tail, head, tail))
   { atom_t name;
-    int arity;
+    size_t arity;
 
     if ( !PL_get_name_arity(head, &name, &arity) )
       goto err3;
@@ -528,7 +528,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
       _PL_get_arg(2, head, tail2);
       while(PL_get_list(tail2, head2, tail2))
       { atom_t name;
-	int arity;
+	size_t arity;
 	int f, t;
 
 	if ( !PL_get_name_arity(head2, &name, &arity) ||
@@ -737,7 +737,7 @@ static foreign_t
 pl_get_table_attribute(term_t handle, term_t name, term_t value)
 { Table table;
   atom_t n;
-  int arity;
+  size_t arity;
 
   if ( !get_table_ex(handle, &table) )
     return FALSE;
@@ -1485,7 +1485,7 @@ pl_read_fields(term_t handle, term_t from, term_t to, term_t fields)
 
   while(PL_get_list(tail, head, tail))
   { atom_t a;
-    int arity;
+    size_t arity;
 
     if ( !PL_get_name_arity(head, &a, &arity) || arity != 1 )
       return error(ERR_INSTANTIATION, "read_fields/4", 4, fields);
@@ -1883,7 +1883,7 @@ rebind_query_vars(Query q, term_t from)
 
       if ( PL_is_variable(arg) )
       { atom_t name;
-	int arity;
+	size_t arity;
 	int i;
 
 	if ( !PL_get_name_arity(head, &name, &arity) )
@@ -1923,7 +1923,7 @@ make_query(Table t, term_t from)
 
   while(PL_get_list(tail, head, tail))
   { atom_t name;
-    int arity;
+    size_t arity;
 
     if ( !PL_get_name_arity(head, &name, &arity) || arity < 1 || arity > 2 )
       goto err2;
@@ -1975,7 +1975,7 @@ make_query(Table t, term_t from)
 	} else
 	{ atom_t opt;
 	  atom_t tab;
-	  int a;
+	  size_t a;
 
 	  _PL_get_arg(2, head, arg);
 	  if ( !PL_get_name_arity(arg, &opt, &a) || a > 1 )

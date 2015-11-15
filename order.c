@@ -22,6 +22,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include <config.h>
 #include <SWI-Prolog.h>
 #ifdef HAVE_MALLOC_H
 #include <malloc.h>
@@ -91,9 +92,9 @@ init_constants()
   ATOM_case_insensitive		= PL_new_atom("case_insensitive");
   ATOM_exact			= PL_new_atom("exact");
 
-  standard_table(ATOM_exact, 			    NULL);
-  standard_table(ATOM_case_insensitive, 	    case_insensitive_table);
-  standard_table(ATOM_iso_latin_1, 		    iso_latin_1_table);
+  standard_table(ATOM_exact,			    NULL);
+  standard_table(ATOM_case_insensitive,		    case_insensitive_table);
+  standard_table(ATOM_iso_latin_1,		    iso_latin_1_table);
   standard_table(ATOM_iso_latin_1_case_insensitive, iso_latin_1_case_table);
 }
 
@@ -303,7 +304,7 @@ pl_new_order_table(term_t name, term_t options)
 
   while(PL_get_list(tail, head, tail))
   { atom_t name;
-    int arity;
+    size_t arity;
 
     if ( PL_get_name_arity(head, &name, &arity) )
     { if ( name == ATOM_case_insensitive )
@@ -510,7 +511,7 @@ pl_compare_strings(term_t ord, term_t t1, term_t t2, term_t result)
   return PL_unify_atom(result,
 		       rval == 0 ? ATOM_eq :
 		       rval <  0 ? ATOM_lt :
-		       	           ATOM_gt);
+			           ATOM_gt);
 }
 
 
