@@ -163,6 +163,11 @@ destroying the access to external database tables.
 			  ({\sc ascii} 9) characters.  For all other
 			  separators, a single character separates the
 			  fields. \\
+    \tt encoding(+\arg{Encoding}) & Text encoding of the file.  Values
+			  are \const{iso_latin_1} (default),
+			  \const{utf8} or \const{native}.  The latter
+			  uses the native multibyte to unicode
+			  conversion. \\
     \tt escape(+\arg{Code}, +\arg{ListOfMap}) & Sometimes, a table
 			  defines escape sequences to make it possible
 			  to use the separator-characters in

@@ -86,6 +86,7 @@ typedef struct tabletag
   int		field_sep;		/* field separator */
   int		escape;			/* escape character (-1: none) */
   char	       *escape_table;		/* escape mapping table */
+  unsigned	encoding;		/* REP_* */
   functor_t	record_functor;		/* functor for record */
   char	       *window;			/* pointer to the current window */
   size_t        window_size;		/* size of the current window */

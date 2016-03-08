@@ -175,6 +175,10 @@ static atom_t ATOM_unique;
 static atom_t ATOM_width;
 static atom_t ATOM_window;
 static atom_t ATOM_arg;
+static atom_t ATOM_encoding;
+static atom_t ATOM_iso_latin_1;
+static atom_t ATOM_utf8;
+static atom_t ATOM_native;
 
 static functor_t FUNCTOR_minus2;
 
@@ -210,6 +214,10 @@ init_constants()
   ATOM_unique			= PL_new_atom("unique");
   ATOM_width			= PL_new_atom("width");
   ATOM_window			= PL_new_atom("window");
+  ATOM_encoding			= PL_new_atom("encoding");
+  ATOM_iso_latin_1		= PL_new_atom("iso_latin_1");
+  ATOM_utf8			= PL_new_atom("utf8");
+  ATOM_native			= PL_new_atom("native");
 
   FUNCTOR_minus2		= PL_new_functor(PL_new_atom("-"), 2);
 }
@@ -439,6 +447,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   table->keyfield = -1;
   table->escape = -1;
   table->escape_table = NULL;
+  table->encoding = REP_ISO_LATIN_1;
 
   if ( !PL_get_atom(file, &table->file) )
   { free(table);
@@ -569,6 +578,21 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
     } else if ( name == ATOM_functor )
     { if ( !PL_get_functor(arg, &table->record_functor) )
 	goto err3;
+    } else if ( name == ATOM_encoding )
+    { atom_t enc;
+
+      if ( !PL_get_atom_ex(arg, &enc) )
+	goto err3;
+      if ( enc == ATOM_iso_latin_1 )
+	table->encoding = REP_ISO_LATIN_1;
+      else if ( enc == ATOM_utf8 )
+	table->encoding = REP_UTF8;
+      else if ( enc == ATOM_native )
+	table->encoding = REP_MB;
+      else
+      { PL_domain_error("encoding", arg);
+	goto err3;
+      }
     } else
       goto err3;
   }
@@ -1267,6 +1291,7 @@ unify_field_text(Table t, int flags, int type,
 #ifndef HAVE_ALLOCA
   char buf[256];
 #endif
+  int chflags = t->encoding;
 
   if ( (flags&(FIELD_DOWNCASE|FIELD_MAPSPACETOUNDERSCORE)) ||
        t->escape >= 0 )
@@ -1285,16 +1310,11 @@ unify_field_text(Table t, int flags, int type,
   }
 
   switch(type)
-  { case FIELD_ATOM:
-      rval = PL_unify_atom_nchars(arg, len, s);
-      break;
-    case FIELD_STRING:
-      rval = PL_unify_string_nchars(arg, len, s);
-      break;
-    case FIELD_CODELIST:
-      rval = PL_unify_list_nchars(arg, len, s);
-      break;
+  { case FIELD_ATOM:     chflags |= PL_ATOM;      break;
+    case FIELD_STRING:   chflags |= PL_STRING;    break;
+    case FIELD_CODELIST: chflags |= PL_CODE_LIST; break;
   }
+  rval = PL_unify_chars(arg, chflags, len, s);
 
 #ifndef HAVE_ALLOCA
   if ( buf != tmp )
