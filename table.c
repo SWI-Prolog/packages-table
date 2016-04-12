@@ -1821,23 +1821,24 @@ execute_binary_search(Query q)
       }
       case MATCH_LT:
       { table_offset_t rc;
-	table_offset_t mid = (low+high)/2;
+	table_offset_t mid;
 
 	high = here;
-	while((rc=find_start_of_record(t, mid) == here) && mid > low)
+	mid = (low+high)/2;
+	while((rc=find_start_of_record(t, mid)) == here && mid > low)
 	  mid--;
 	here = rc;
-	DEBUG(Sdprintf("<, %d %d %d\n", low, here, high));
+	DEBUG(Sdprintf("<, %ld %ld %ld\n", (long)low, (long)here, (long)high));
 	goto next;
       }
       case MATCH_GT:
       { low = here;
 	here = find_start_of_record(t, (low+high)/2);
-	DEBUG(Sdprintf(">, %d %d %d\n", low, here, high));
+	DEBUG(Sdprintf(">, %ld %ld %ld\n", (long)low, (long)here, (long)high));
 	goto next;
       }
       case MATCH_EQ:
-	DEBUG(Sdprintf("=, %d\n", here));
+	DEBUG(Sdprintf("=, %ld\n", (long)here));
 	if ( t->fields[t->keyfield].flags & FIELD_UNIQUE )
 	{ q->technique |= TECH_UNIQUE;
 	  return here;
@@ -2113,7 +2114,7 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
   if ( q->technique & TECH_BINARY )
   { table_offset_t next;
 
-    DEBUG(Sdprintf("Binary search, match at offset=%ld\n", q->offset));
+    DEBUG(Sdprintf("Binary search, match at offset=%ld\n", (long)q->offset));
 
     if ( q->technique & TECH_UNIQUE )
     { int rc;
@@ -2138,7 +2139,7 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
       do
       { int rc;
 
-	DEBUG(Sdprintf("Trying offset %ld\n", q->offset));
+	DEBUG(Sdprintf("Trying offset %ld\n", (long)q->offset));
 
 	if ( (rc=match_record(q, q->offset, &next, 0)) == MATCH_EQ )
 	{ if ( (match_record(q, q->offset, &next, MR_BIND) == MATCH_ERROR) ||
