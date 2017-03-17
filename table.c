@@ -38,6 +38,10 @@
 
 #define O_ORDER				/* include order.c package */
 
+#ifndef BUILD_DATE
+#define BUILD_DATE __DATE__
+#endif
+
 #include <SWI-Stream.h>
 
 #include "table.h"
@@ -2198,7 +2202,7 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
 static foreign_t
 pl_table_version(term_t version, term_t date)
 { if ( PL_unify_atom_chars(version, TABLE_VERSION) &&
-       PL_unify_atom_chars(date, __DATE__) )
+       PL_unify_atom_chars(date, BUILD_DATE) )
     return TRUE;
 
   return FALSE;

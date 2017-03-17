@@ -11,6 +11,12 @@ include ../Makefile.defs
 CFLAGS+= -I.
 LIBS=@LIBS@
 
+DATE_FMT = %Y-%m-%d
+ifdef SOURCE_DATE_EPOCH
+    BUILD_DATE ?= $(shell date -u -d "@$(SOURCE_DATE_EPOCH)" "+$(DATE_FMT)"  2>/dev/null || date -u -r "$(SOURCE_DATE_EPOCH)" "+$(DATE_FMT)" 2>/dev/null || date -u "+$(DATE_FMT)")
+    CFLAGS += -DBUILD_DATE=\"${BUILD_DATE}\"
+endif
+
 LIBPL=		table.pl table_util.pl
 TARGETS=	table.@SO@
 
