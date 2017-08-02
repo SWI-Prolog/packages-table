@@ -9,6 +9,7 @@ m4_include([../ac_swi_c.m4])
 case $PLARCH in
     *darwin*)
 	CMFLAGS="$CMFLAGS -cc-options,-no-cpp-precomp"
+	define([__unix__], 1)
         undefine([__unix__])
 	AC_DEFINE(__unix__, 1, [Define if OS is Unix-like])
 	;;
