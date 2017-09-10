@@ -20,7 +20,7 @@
 
 \begin{abstract}
 This document describes a foreign language extension to
-\url[SWI-Prolog]{http://www.swi.psy.uva.nl/projects/SWI-Prolog} for the
+\href{http://www.swi-prolog.org}{SWI-Prolog} for the
 manipulation of `external tables'. External tables are files using a
 textual representation of records separated into fields. The package
 allows for a flexible definition of the format of the file in terms of
