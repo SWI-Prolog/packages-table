@@ -1291,25 +1291,20 @@ unify_field_text(Table t, int flags, int type,
 		 term_t arg, const char *s, size_t len)
 { char *tmp;
   int rval = FALSE;
-#ifndef HAVE_ALLOCA
-  char buf[256];
-#endif
+  char buf[1024];
   int chflags = t->encoding;
 
   if ( (flags&(FIELD_DOWNCASE|FIELD_MAPSPACETOUNDERSCORE)) ||
        t->escape >= 0 )
-  {
-#ifdef HAVE_ALLOCA
-    tmp = alloca(len+1);
-#else
-    if ( len < 256 )
+  { if ( len < 256 )
       tmp = buf;
     else
       tmp = malloc(len+1);
-#endif
     tab_memcpy(t, flags, tmp, s, len);
     len = strlen(tmp);
     s = tmp;
+  } else
+  { tmp = buf;
   }
 
   switch(type)
@@ -1319,10 +1314,9 @@ unify_field_text(Table t, int flags, int type,
   }
   rval = PL_unify_chars(arg, chflags, len, s);
 
-#ifndef HAVE_ALLOCA
   if ( buf != tmp )
     free(tmp);
-#endif
+
   return rval;
 }
 
