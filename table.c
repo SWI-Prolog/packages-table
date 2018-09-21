@@ -857,6 +857,7 @@ unify_field_info(term_t t, Field field)	/* name(Type, Flags) */
       type = ATOM_float;
       break;
     default:
+      type = 0;
       assert(0);
   }
 
