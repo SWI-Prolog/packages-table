@@ -13,3 +13,6 @@ swipl_plugin(
     C_SOURCES table.c order.c error.c
     PL_LIBS table.pl table_util.pl)
 
+pkg_doc(table
+        SECTION
+        SOURCE table.doc)
