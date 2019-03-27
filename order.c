@@ -172,8 +172,9 @@ get_char(term_t t, int *chr)
 
 static int
 parse_set(OrdTable ot, atom_t name, term_t set)
-{ term_t c = PL_new_term_ref();
-  int type;
+{ int type;
+  size_t len;
+  char *s;
 
   if ( name == ATOM_break )
     type = ORD_BREAK;
@@ -184,16 +185,16 @@ parse_set(OrdTable ot, atom_t name, term_t set)
   else
     return FALSE;
 
-  while(PL_get_list(set, c, set))
-  { int i;
+  if ( PL_get_nchars(set, &len, &s, CVT_STRING|CVT_LIST|CVT_EXCEPTION) )
+  { size_t i;
 
-    if ( !get_char(c, &i) )
-      return FALSE;
+    for(i=0; i<len; i++)
+      ORD(ot, s[i]&0xff) = type;
 
-    ORD(ot, i) = type;
+    return TRUE;
   }
 
-  return PL_get_nil(set);
+  return FALSE;
 }
 
 
