@@ -3,7 +3,7 @@ project(swipl-table)
 
 include("../cmake/PrologPackage.cmake")
 
-AC_CHECK_HEADERS(malloc.h unistd.h ctype.h sys/time.h fcntl.h floatingpoint.h)
+AC_CHECK_HEADERS(malloc.h unistd.h ctype.h sys/time.h fcntl.h floatingpoint.h sys/mman.h)
 AC_CHECK_FUNCS(mmap strerror)
 
 configure_file(config.h.cmake config.h)

@@ -97,7 +97,7 @@ typedef struct tabletag
   HANDLE	hfile;			/* handle to the file */
   HANDLE	hmap;			/* handle to the map */
 #endif
-#ifdef __unix__
+#ifdef HAVE_MMAP
   int		fd;			/* file descriptor */
 #endif
 } table, *Table;

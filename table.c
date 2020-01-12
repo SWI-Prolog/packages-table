@@ -53,12 +53,14 @@
 #include <memory.h>
 #include <string.h>
 #include <assert.h>
-#ifdef __unix__
 #include <errno.h>
 #include <sys/types.h>
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #ifdef HAVE_CTYPE_H
@@ -627,7 +629,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   table->hfile  = NULL;
   table->hmap   = NULL;
 #endif
-#ifdef __unix__
+#ifdef HAVE_MMAP
   table->fd     = -1;
 #endif
 
@@ -697,9 +699,8 @@ open_table(Table table)
 
     return error(ERR_IO, "open_table/1", id, NULL);
   }
-#endif /*__WINDOWS__*/
+#elif defined(HAVE_MMAP)
 
-#ifdef __unix__
     struct stat buf;
 
 #ifndef MAP_NORESERVE
@@ -954,7 +955,7 @@ pl_close_table(term_t handle)
     table->hfile  = NULL;
     table->hmap   = NULL;
 #endif
-#ifdef __unix__
+#ifdef HAVE_MMAP
     if ( table->buffer )
       munmap(table->buffer, table->size);
     if ( table->fd >= 0 )

@@ -3,6 +3,7 @@
 #cmakedefine HAVE_FLOATINGPOINT_H
 #cmakedefine HAVE_MALLOC_H
 #cmakedefine HAVE_MMAP
+#cmakedefine HAVE_SYS_MMAN_H
 #cmakedefine HAVE_STRERROR
 #cmakedefine PL_ARITY_AS_SIZE
 

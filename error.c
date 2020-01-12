@@ -39,9 +39,7 @@
 #include "error.h"
 #include "table.h"
 #include <string.h>
-#ifdef __unix__
 #include <errno.h>
-#endif
 
 #ifdef __WINDOWS__
 #include <malloc.h>
