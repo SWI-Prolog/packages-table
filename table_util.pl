@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  1999-2011, University of Amsterdam
+    Copyright (c)  1999-2020, University of Amsterdam
+                              CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -36,29 +37,22 @@
           [ sort_table/2,               % +Handle, +OutputFile
             verify_table_order/1        % +Handle
           ]).
-:- use_module(library(table)).
+:- autoload(library(backcomp),[flush/0]).
+:- autoload(library(table),
+	    [ get_table_attribute/3,
+	      read_table_record_data/4,
+	      compare_strings/4,
+	      read_table_fields/4
+	    ]).
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Utility library for the table package.  Predicates:
+/** <module> Tabular file handling utilities
+*/
 
-        verify_table_order(+Table)
-                If `table' is a handle to a defined table and the table
-                contains a key-fields, check that the fields in the table
-                are really sorted according to the order defined in the
-                table.  Errors are reported.
-
-        sort_table(+Table, +FileName)
-                Read the records from the given table, sort them according
-                to the ordering information on the key field and write the
-                result to the given filename.  Note this may require a lot
-                of memory.
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-
-%       sort_table(+Table, +File)
+%!  sort_table(+Table, +File)
 %
-%       Read the given table, sort it using the associated ordering and
-%       write the result back to File.
+%   Read the records from the given table,   sort  them according to the
+%   ordering information on the key field and   write  the result to the
+%   given filename. Note this may require a lot of memory.
 
 sort_table(Table, File) :-
     open(File, write, OutFd),       % fail early :-)
@@ -109,10 +103,10 @@ write_records([_-From|T], Table, Sep, OutFd) :-
     write_records(T, Table, Sep, OutFd).
 
 
-%       sort_keyed_strings(+Table, +List, -Sorted)
+%!  sort_keyed_strings(+Table, +List, -Sorted)
 %
-%       Sort a list of KeyName-Index pairs on their KeyName using the
-%       given ordering table.
+%   Sort a list of KeyName-Index pairs on  their KeyName using the given
+%   ordering table.
 
 sort_keyed_strings(Table, List, Sorted) :-
     length(List, Length),
@@ -154,9 +148,11 @@ merge2(_, A, B, [A, B]).
                  *             VERIFY           *
                  *******************************/
 
-%       verify_table_order)(+Table)
+%!  verify_table_order(+Table)
 %
-%       Verify a sorted table is really sorted according to its documentation.
+%   If Table is a handle to a  defined   table  and the table contains a
+%   key-fields, check that the fields  in   the  table are really sorted
+%   according to the order defined in the table. Errors are reported.
 
 verify_table_order(Table) :-
     get_table_attribute(Table, key_field, Key),

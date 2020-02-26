@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  1999-2011, University of Amsterdam
+    Copyright (c)  1999-2020, University of Amsterdam
+                              CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -53,5 +54,4 @@
             sub_string/3,
             table_version/2             % -Version, -CompiledDate
           ]).
-
 :- use_foreign_library(foreign(table)).
