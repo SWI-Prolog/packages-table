@@ -5,5 +5,4 @@
 #cmakedefine HAVE_MMAP
 #cmakedefine HAVE_SYS_MMAN_H
 #cmakedefine HAVE_STRERROR
-#cmakedefine PL_ARITY_AS_SIZE
 
