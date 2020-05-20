@@ -304,13 +304,13 @@ get_size_ex(term_t t, size_t *v)
 
   if ( PL_get_int64(t, &i) )
   { if ( i < 0 )
-      return domain_error(t, "nonneg");
+      return domain_error(t, "nonneg"),FALSE;
 
     *v = (size_t)i;			/* TBD: Check on 32-bit systems */
     return TRUE;
   }
 
-  return type_error(t, "integer");
+  return type_error(t, "integer"),FALSE;
 }
 
 
@@ -320,13 +320,13 @@ get_offset_ex(term_t t, table_offset_t *v)
 
   if ( PL_get_int64(t, &i) )
   { if ( i < 0 )
-      return domain_error(t, "nonneg");
+      return domain_error(t, "nonneg"),FALSE;
 
     *v = (table_offset_t)i;		/* TBD: Check on 32-bit systems */
     return TRUE;
   }
 
-  return type_error(t, "integer");
+  return type_error(t, "integer"),FALSE;
 }
 
 
