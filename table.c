@@ -529,7 +529,8 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   table->record_sep = '\n';
   table->field_sep  = ' ';
 
-  PL_put_term(tail, options);
+  if ( !PL_put_term(tail, options) )
+    return FALSE;
   while(PL_get_list(tail, head, tail))
   { atom_t name;
     size_t arity;
