@@ -101,7 +101,7 @@ error_func(int type, const char *pred, int argi, intptr_t argl)
     { char buf[1024];
 
       sprintf(buf, "%s: instantiation error on argument %d", pred, argi);
-      return PL_warning(buf);
+      return PL_warning("%s", buf);
     }
     case ERR_IO:
     { char buf[1024];
@@ -114,9 +114,9 @@ error_func(int type, const char *pred, int argi, intptr_t argl)
       sprintf(buf, "%s: IO error %s", pred, strerror(argi));
 #endif
 
-      return PL_warning(buf);
+      return PL_warning("%s", buf);
     }
   }
 
-  return PL_warning("Table package: unknown error");
+  return PL_warning("%s", "Table package: unknown error");
 }
