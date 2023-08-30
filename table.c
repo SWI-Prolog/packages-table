@@ -33,6 +33,7 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
+#define _CRT_SECURE_NO_WARNINGS 1
 #include <config.h>
 
 #define O_ORDER				/* include order.c package */
