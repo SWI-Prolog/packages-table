@@ -157,22 +157,22 @@ findOrdTable(atom_t name)
 		 *          ORDER TABLE		*
 		 *******************************/
 
-static int
-get_char(term_t t, int *chr)
+static bool
+get_char(term_t t, unsigned char *chr)
 { int i;
 
   if ( PL_get_integer(t, &i) && i >= 0 && i <= 255 )
-  { *chr = i;
-    return TRUE;
+  { *chr = (unsigned char) i;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 
-static int
+static bool
 parse_set(OrdTable ot, atom_t name, term_t set)
-{ int type;
+{ unsigned char type;
   size_t len;
   char *s;
 
@@ -183,7 +183,7 @@ parse_set(OrdTable ot, atom_t name, term_t set)
   else if ( name == ATOM_tag )
     type = ORD_TAG;
   else
-    return FALSE;
+    return false;
 
   if ( PL_get_nchars(set, &len, &s, CVT_STRING|CVT_LIST|CVT_EXCEPTION) )
   { size_t i;
@@ -191,10 +191,10 @@ parse_set(OrdTable ot, atom_t name, term_t set)
     for(i=0; i<len; i++)
       ORD(ot, s[i]&0xff) = type;
 
-    return TRUE;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 
@@ -216,13 +216,13 @@ exact_table(OrdTable ot)
   ot->magic = ORD_MAGIC;
 
   for(i=0; i<256; i++)
-    ORD(ot, i) = i;
+    ORD(ot, i) = (unsigned char) i; /* safe cast */
 }
 
 
 static void
 case_insensitive_table(OrdTable ot)
-{ int i;
+{ unsigned char i;
 
   ot->magic = ORD_MAGIC;
 
@@ -292,7 +292,7 @@ iso_latin_1_case_table(OrdTable ot)
   iso_latin_1_table(ot);
 
   for(i=0; i<=255; i++)
-  { int o = ORD(ot, i);
+  { unsigned char o = ORD(ot, i);
 
     if ( o >= 'A' && o <= 'Z' )
       ORD(ot, i) = o + ('a' - 'A');
@@ -347,7 +347,7 @@ pl_new_order_table(term_t name, term_t options)
       } else if ( name == ATOM_eq && arity == 2 )
       { fid_t fid = PL_open_foreign_frame();
 	term_t c = PL_new_term_ref();
-	int from, to;
+	unsigned char from, to;
 
 	if ( !PL_get_arg(1, head, c) || !get_char(c, &from) ||
 	     !PL_get_arg(2, head, c) || !get_char(c, &to) )

@@ -405,7 +405,7 @@ get_field_flag(atom_t name, term_t arg, Field field)
 }
 
 
-static int
+static bool
 default_escape_table(Table t)
 { int i;
 
@@ -413,7 +413,7 @@ default_escape_table(Table t)
     return PL_resource_error("memory");
 
   for(i=0; i<256; i++)
-    t->escape_table[i] = i;
+    t->escape_table[i] = (unsigned char) i;
 
   if ( t->escape == '\\' )
   { t->escape_table['b'] = '\b';
@@ -423,19 +423,19 @@ default_escape_table(Table t)
     t->escape_table['t'] = '\t';
   }
 
-  return TRUE;
+  return true;
 }
 
 
-static int
-get_char(term_t t, int *chr)
+static bool
+get_char(term_t t, unsigned char *chr)
 { int i;
 
   if ( !PL_get_integer(t, &i) || i < 0 || i > 255 )
-    return FALSE;
-  *chr = i;
+    return false;
+  *chr = (unsigned char) i;
 
-  return TRUE;
+  return true;
 }
 
 
@@ -557,7 +557,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
       while(PL_get_list(tail2, head2, tail2))
       { atom_t name;
 	size_t arity;
-	int f, t;
+	unsigned char f, t;
 
 	if ( !PL_get_name_arity(head2, &name, &arity) ||
 	     name != ATOM_eq || arity != 2 )
@@ -1254,22 +1254,22 @@ tab_memcpy(Table table, int flags, char *to, const char *from, size_t len)
 
   if ( flags & FIELD_DOWNCASE )
   { for( ; i-- > 0; t++, from++)
-    { int c = *from & 0xff;
+    { char c = *from;
 
       if ( c == table->escape && i > 0 )
-      { int c2 = *++from & 0xff;
+      { int c2 = *++from;
 	c = table->escape_table[c2];
 	i--;
       }
-      *t = (isupper(c) ? tolower(c) : c);
+      *t = (char) tolower(c); /* safe cast */
     }
     *t = EOS;
   } else if ( table->escape >= 0 )
   { for( ; i-- > 0; from++)
-    { int c = *from & 0xff;
+    { char c = *from;
 
       if ( c == table->escape && i > 0 )
-      { int c2 = *++from & 0xff;
+      { int c2 = *++from;
 	c = table->escape_table[c2];
 	i--;
       }
