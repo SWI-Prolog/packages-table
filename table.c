@@ -585,8 +585,12 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
     { if ( !PL_get_integer(arg, &table->field_sep) )
 	goto err3;
     } else if ( name == ATOM_functor )
-    { if ( !PL_get_functor(arg, &table->record_functor) )
+    { atom_t fname;
+      size_t farity;
+					/* PL_new_functor() keeps it alive */
+      if ( !PL_get_name_arity(arg, &fname, &farity) )
 	goto err3;
+      table->record_functor = PL_new_functor(fname, farity);
     } else if ( name == ATOM_encoding )
     { atom_t enc;
 
