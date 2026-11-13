@@ -248,7 +248,7 @@ domain_error(term_t actual, const char *expected)
 		       PL_VARIABLE) )
     return PL_raise_exception(ex);
 
-  return FALSE;
+  return false;
 }
 
 
@@ -265,7 +265,7 @@ type_error(term_t actual, const char *expected)
 		       PL_VARIABLE) )
     return PL_raise_exception(ex);
 
-  return FALSE;
+  return false;
 }
 
 
@@ -281,7 +281,7 @@ existence_error(term_t actual, const char *expected)
 		         PL_TERM, actual,
 		       PL_VARIABLE) )
     return PL_raise_exception(ex);
-  return FALSE;
+  return false;
 }
 
 
@@ -307,13 +307,13 @@ get_size_ex(term_t t, size_t *v)
 
   if ( PL_get_int64(t, &i) )
   { if ( i < 0 )
-      return domain_error(t, "nonneg"),FALSE;
+      return domain_error(t, "nonneg"),false;
 
     *v = (size_t)i;			/* TBD: Check on 32-bit systems */
-    return TRUE;
+    return true;
   }
 
-  return type_error(t, "integer"),FALSE;
+  return type_error(t, "integer"),false;
 }
 
 
@@ -323,13 +323,13 @@ get_offset_ex(term_t t, table_offset_t *v)
 
   if ( PL_get_int64(t, &i) )
   { if ( i < 0 )
-      return domain_error(t, "nonneg"),FALSE;
+      return domain_error(t, "nonneg"),false;
 
     *v = (table_offset_t)i;		/* TBD: Check on 32-bit systems */
-    return TRUE;
+    return true;
   }
 
-  return type_error(t, "integer"),FALSE;
+  return type_error(t, "integer"),false;
 }
 
 
@@ -342,7 +342,7 @@ get_table_ex(term_t handle, Table *table)
 
     if ( t->magic == TABLE_MAGIC )
     { *table = t;
-      return TRUE;
+      return true;
     }
 
     return existence_error(handle, "table"),false;
@@ -382,7 +382,7 @@ get_field_flag(atom_t name, term_t arg, Field field)
 
       if ( !PL_get_atom(arg, &tab) ||
 	   !(field->ord = findOrdTable(tab)) )
-	return FALSE;
+	return false;
     }
   } else if ( name == ATOM_unique && arg == 0 )
     field->flags |= FIELD_UNIQUE;
@@ -399,9 +399,9 @@ get_field_flag(atom_t name, term_t arg, Field field)
   else if ( name == ATOM_skip && !arg )
     field->arg = 0;
   else
-    return FALSE;
+    return false;
 
-  return TRUE;
+  return true;
 }
 
 
@@ -533,7 +533,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
   table->field_sep  = ' ';
 
   if ( !PL_put_term(tail, options) )
-    return FALSE;
+    return false;
   while(PL_get_list(tail, head, tail))
   { atom_t name;
     size_t arity;
@@ -551,7 +551,7 @@ pl_new_table(term_t file, term_t columns, term_t options, term_t handle)
 
       if ( !default_escape_table(table) )
       { free(table);
-	return FALSE;
+	return false;
       }
       _PL_get_arg(2, head, tail2);
       while(PL_get_list(tail2, head2, tail2))
@@ -688,9 +688,9 @@ open_table(Table table)
 
     table->window      = table->buffer;
     table->window_size = table->size;
-    table->opened      = TRUE;
+    table->opened      = true;
 
-    return TRUE;
+    return true;
 
 					/* error happened */
   errio:
@@ -732,9 +732,9 @@ open_table(Table table)
 
     table->window      = table->buffer;
     table->window_size = table->size;
-    table->opened      = TRUE;
+    table->opened      = true;
 
-    return TRUE;
+    return true;
 
 					/* error happened */
   errio:
@@ -750,7 +750,7 @@ open_table(Table table)
 #endif
   }
 
-  return TRUE;
+  return true;
 }
 
 
@@ -761,11 +761,11 @@ pl_table_window(term_t handle, term_t start, term_t size)
   size_t wsize;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
   if ( !get_size_ex(start, &from) )
-    return FALSE;
+    return false;
   if ( !get_size_ex(size, &wsize) )
-    return FALSE;
+    return false;
 
   if ( from > table->size )
     from = table->size;
@@ -786,7 +786,7 @@ pl_get_table_attribute(term_t handle, term_t name, term_t value)
   size_t arity;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
 
 
   if ( PL_get_name_arity(name, &n, &arity) )
@@ -802,7 +802,7 @@ pl_get_table_attribute(term_t handle, term_t name, term_t value)
       { if ( i >= 1 && i <= table->nfields )
 	  return unify_field_info(value, &table->fields[i-1]);
 
-	return FALSE;
+	return false;
       }
 
       goto ierr2;
@@ -818,11 +818,11 @@ pl_get_table_attribute(term_t handle, term_t name, term_t value)
     { if ( table->keyfield >= 0 )
 	return PL_unify_integer(value, table->keyfield+1);
       else
-	return FALSE;
+	return false;
     }
 
     if ( !open_table(table) )
-      return FALSE;
+      return false;
 
     if ( n == ATOM_size && arity == 0 )
       return PL_unify_integer(value, table->size);
@@ -873,50 +873,50 @@ unify_field_info(term_t t, Field field)	/* name(Type, Flags) */
   if ( field->flags & FIELD_UNIQUE )
   { if ( !PL_unify_list(tail, head, tail) ||
 	 !PL_unify_atom(head, ATOM_unique) )
-      return FALSE;
+      return false;
     options++;
   }
   if ( field->flags & FIELD_DOWNCASE )
   { if ( !PL_unify_list(tail, head, tail) ||
 	 !PL_unify_atom(head, ATOM_downcase) )
-      return FALSE;
+      return false;
     options++;
   }
   if ( field->flags & FIELD_ALLOWBADNUM )
   { if ( !PL_unify_list(tail, head, tail) ||
 	 !PL_unify_atom(head, ATOM_syntax) )
-      return FALSE;
+      return false;
     options++;
   }
   if ( field->flags & FIELD_MAPSPACETOUNDERSCORE )
   { if ( !PL_unify_list(tail, head, tail) ||
 	 !PL_unify_atom(head, ATOM_map_space_to_underscore) )
-      return FALSE;
+      return false;
     options++;
   }
   if ( field->flags & FIELD_SORTED )
   { if ( !PL_unify_list(tail, head, tail) )
-      return FALSE;
+      return false;
     if ( field->ord )
     { if ( !PL_unify_term(head, PL_FUNCTOR, PL_new_functor(ATOM_sorted, 1),
 			  PL_ATOM, field->ord->name) )
-	return FALSE;
+	return false;
     } else
     { if ( !PL_unify_atom(head, ATOM_sorted) )
-	return FALSE;
+	return false;
     }
     options++;
   }
   if ( field->width > 0 )
   { if ( !PL_unify_term(head, PL_FUNCTOR, PL_new_functor(ATOM_width, 1),
 			PL_INT, field->width) )
-      return FALSE;
+      return false;
     options++;
   }
   if ( field->arg > 0 )
   { if ( !PL_unify_term(head, PL_FUNCTOR, PL_new_functor(ATOM_arg, 1),
 			PL_INT, field->arg) )
-      return FALSE;
+      return false;
     options++;
   }
 
@@ -938,7 +938,7 @@ pl_open_table(term_t handle)
 { Table table;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
 
   return open_table(table);
 }
@@ -949,7 +949,7 @@ pl_close_table(term_t handle)
 { Table table;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
 
   if ( table->buffer )
   {
@@ -974,7 +974,7 @@ pl_close_table(term_t handle)
     table->size   = -1;
     table->buffer = NULL;
     table->window = NULL;
-    table->opened = FALSE;
+    table->opened = false;
   }
 
   PL_succeed;
@@ -989,7 +989,7 @@ pl_free_table(term_t handle)
     PL_fail;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
 
   table->magic = 0;			/* so it won't be recognised */
   if ( table->escape_table )
@@ -1088,9 +1088,9 @@ pl_previous_record(term_t handle, term_t here, term_t prev)
   table_offset_t start;
 
   if ( !get_table_ex(handle, &t) )
-    return FALSE;
+    return false;
   if ( !get_offset_ex(here, &start) )
-    return FALSE;
+    return false;
 
   if ( !open_table(t) )
     PL_fail;
@@ -1126,7 +1126,7 @@ pl_start_of_record(term_t handle,		/* table */
   switch(PL_foreign_control(control))
   { case PL_FIRST_CALL:
       if ( !get_size_ex(from, &f) )
-	return FALSE;
+	return false;
       break;
     case PL_REDO:
       f = PL_foreign_context(control);
@@ -1137,12 +1137,12 @@ pl_start_of_record(term_t handle,		/* table */
   }
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
   if ( !get_offset_ex(to, &t) )
-    return FALSE;
+    return false;
 
   if ( !open_table(table) )
-    return FALSE;
+    return false;
 					/* find end of search */
   if ( t < 0 || (size_t)t > table->window_size )
     end = table->window + table->window_size;
@@ -1197,24 +1197,24 @@ field_boundaries(Table t, Field f, table_offset_t start,
   if ( f->width > 0 )			/* fixed-width field */
   { z = s + f->width;
     if ( z > e )
-      return FALSE;
+      return false;
     if ( next )
       *next = z - t->window;
   } else
   { if ( ef == ' ' )
     { for( ; isBlank(*s); s++ )		/* skip leading blanks */
       { if ( s >= e )
-	  return FALSE;
+	  return false;
       }
 					/* record to next blank */
       for(z=s+1; !isBlank(*z) && *z != er; z++)
       { if ( z >= e )
-	  return FALSE;
+	  return false;
       }
     } else
     { for(z=s; *z != ef && *z != er; z++)
       { if ( z >= e )
-	  return FALSE;
+	  return false;
       }
       if ( *z == er && er == '\n' && z[-1] == '\r' )
       { if ( next )
@@ -1232,7 +1232,7 @@ out:
   *sf = s;
   *zf = z;
 
-  return TRUE;
+  return true;
 }
 
 
@@ -1300,7 +1300,7 @@ static int
 unify_field_text(Table t, int flags, int type,
 		 term_t arg, const char *s, size_t len)
 { char *tmp;
-  int rval = FALSE;
+  int rval = false;
   char buf[1024];
   int chflags = t->encoding;
 
@@ -1338,10 +1338,10 @@ read_field(Table t, Field f, table_offset_t start, table_offset_t *end, term_t a
   int type;
 
   if ( !field_boundaries(t, f, start, &s, &z, end) )
-    return FALSE;
+    return false;
 
   if ( !arg )
-    return TRUE;			/* just skipping */
+    return true;			/* just skipping */
 
   switch((type=f->type))
   { case FIELD_ATOM:
@@ -1406,7 +1406,7 @@ read_field(Table t, Field f, table_offset_t start, table_offset_t *end, term_t a
   }
 
 
-  return TRUE;
+  return true;
 }
 
 
@@ -1417,27 +1417,27 @@ read_record(Table t, table_offset_t start, table_offset_t *end, term_t record)
   term_t arg = PL_new_term_ref();
 
   if ( !open_table(t) )			/* just make sure */
-    return FALSE;
+    return false;
 
   if ( !PL_unify_functor(record, t->record_functor) )
-    return FALSE;
+    return false;
 
   f = t->fields;
   for(n=1; n<=t->nfields; n++, f++)
   { if ( f->arg > 0 )
     { if ( !PL_get_arg(f->arg, record, arg) ||
 	   !read_field(t, f, start, &start, arg) )
-	return FALSE;
+	return false;
     } else
     { if ( !read_field(t, f, start, &start, 0) )
-	return FALSE;
+	return false;
     }
   }
 
   if ( end )
     *end = find_next_record(t, start);
 
-  return TRUE;
+  return true;
 }
 
 
@@ -1447,12 +1447,12 @@ pl_read_record(term_t handle, term_t from, term_t to, term_t record)
   table_offset_t start, end;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
   if ( !get_offset_ex(from, &start) )
-    return FALSE;
+    return false;
 
   if ( !open_table(table) )
-    return FALSE;
+    return false;
 
   if ( (start = find_start_of_record(table, start)) < 0 )
     PL_fail;
@@ -1471,19 +1471,19 @@ pl_read_record_data(term_t handle, term_t from, term_t to, term_t record)
   size_t len;
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
   if ( !get_offset_ex(from, &start) )
-    return FALSE;
+    return false;
 
   if ( !open_table(table) )
-    return FALSE;
+    return false;
 
   if ( (start = find_start_of_record(table, start)) < 0 )
     PL_fail;
   end = find_next_record(table, start+1);
 
   if ( end <= start || !PL_unify_integer(to, end) )
-    return FALSE;
+    return false;
 
   len = end-start-1;
 
@@ -1506,13 +1506,13 @@ pl_read_fields(term_t handle, term_t from, term_t to, term_t fields)
 #endif
 
   if ( !get_table_ex(handle, &table) )
-    return FALSE;
+    return false;
   if ( !get_offset_ex(from, &start) )
-    return FALSE;
+    return false;
 
   if ( !open_table(table) ||
        (start = find_start_of_record(table, start)) < 0 )
-    return FALSE;
+    return false;
 
 #ifdef HAVE_ALLOCA
   argv = alloca(sizeof(term_t) * table->nfields);
@@ -1531,7 +1531,7 @@ pl_read_fields(term_t handle, term_t from, term_t to, term_t fields)
     { if ( table->fields[i].name == a )
       { argv[i] = PL_new_term_ref();
 	if ( !PL_get_arg(1, head, argv[i]) )
-	  return FALSE;
+	  return false;
 	goto cont;
       }
     }
@@ -1549,10 +1549,10 @@ pl_read_fields(term_t handle, term_t from, term_t to, term_t fields)
   for(i=0; i<table->nfields; i++, f++)
   { if ( argv[i] )
     { if ( !read_field(table, f, start, &start, argv[i]) )
-	return FALSE;
+	return false;
     } else
     { if ( !read_field(table, f, start, &start, 0) )
-	return FALSE;
+	return false;
     }
   }
 
@@ -1822,7 +1822,7 @@ execute_binary_search(Query q)
 	return -1;
       case MATCH_NORECORD:
       { if ( here >= (table_offset_t)t->window_size )
-	  return FALSE;
+	  return false;
 	here = next;
 	continue;
       }
@@ -1917,7 +1917,7 @@ rebind_query_vars(Query q, term_t from)
 
     while(PL_get_list(tail, head, tail))
     { if ( !PL_get_arg(1, head, arg) )
-	return FALSE;
+	return false;
 
       if ( PL_is_variable(arg) )
       { atom_t name;
@@ -1925,13 +1925,13 @@ rebind_query_vars(Query q, term_t from)
 	int i;
 
 	if ( !PL_get_name_arity(head, &name, &arity) )
-	  return FALSE;
+	  return false;
 	for(i=0; i<q->table->nfields; i++)
 	{ if ( q->table->fields[i].name == name )
 	  { QueryField qf = &q->field[i];
 	    qf->value.term = PL_copy_term_ref(arg);
 	    if ( --varsleft == 0 )
-	      return TRUE;
+	      return true;
 	    break;
 	  }
 	}
@@ -1939,7 +1939,7 @@ rebind_query_vars(Query q, term_t from)
     }
   }
 
-  return TRUE;
+  return true;
 }
 
 
@@ -2068,10 +2068,10 @@ unique_match(Query q)
 
   for(i=0; i<q->table->nfields; i++, qf++, f++)
   { if ( !(qf->flags & QUERY_DONTCARE) && f->flags & FIELD_UNIQUE )
-      return TRUE;
+      return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 
@@ -2088,7 +2088,7 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
     { Table t;
 
       if ( !get_table_ex(handle, &t) )
-	return FALSE;
+	return false;
       if ( !open_table(t) )
 	PL_fail;
       if ( !(q=make_query(t, spec)) )
@@ -2099,7 +2099,7 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
       if ( q->technique & TECH_BINARY )
       { if ( (q->offset = execute_binary_search(q)) == -1 )
 	{ free_query(q);
-	  return FALSE;
+	  return false;
 	}
       }
 
@@ -2128,17 +2128,17 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
 
       if ( (rc=match_record(q, q->offset, &next, MR_BIND)) == MATCH_EQ )
       { if ( !PL_unify_integer(record, q->offset) )
-	  return FALSE;
+	  return false;
 	if ( unique_match(q) )
 	{ free_query(q);
-	  return TRUE;
+	  return true;
 	}
 	q->offset = next;
 
 	PL_retry_address(q);
       } else if ( rc == MATCH_ERROR )
       { free_query(q);
-	return FALSE;
+	return false;
       }
     } else
     { DEBUG(Sdprintf("Non-unique match\n"));
@@ -2152,18 +2152,18 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
 	{ if ( (match_record(q, q->offset, &next, MR_BIND) == MATCH_ERROR) ||
 	       !PL_unify_integer(record, q->offset) )
 	  { free_query(q);
-	    return FALSE;
+	    return false;
 	  }
 	  if ( unique_match(q) )
 	  { free_query(q);
-	    return TRUE;
+	    return true;
 	  }
 	  q->offset = next;
 
 	  PL_retry_address(q);
 	} else if ( rc == MATCH_ERROR )
 	{ free_query(q);
-	  return FALSE;
+	  return false;
 	}
 
 	q->offset = next;
@@ -2171,7 +2171,7 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
     }
 
     free_query(q);
-    return FALSE;
+    return false;
   }
 
 
@@ -2181,10 +2181,10 @@ pl_in_table(term_t handle, term_t spec, term_t record, control_t control)
     if ( match_record(q, q->offset, &next, 0) == MATCH_EQ )
     { match_record(q, q->offset, &next, MR_BIND);
       if ( !PL_unify_integer(record, q->offset) )
-	return FALSE;
+	return false;
       if ( unique_match(q) )
       { free_query(q);
-	return TRUE;
+	return true;
       }
       q->offset = next;
 
@@ -2206,9 +2206,9 @@ static foreign_t
 pl_table_version(term_t version, term_t date)
 { if ( PL_unify_atom_chars(version, TABLE_VERSION) &&
        PL_unify_atom_chars(date, BUILD_DATE) )
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }
 
 

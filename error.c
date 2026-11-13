@@ -66,7 +66,7 @@ error_func(int type, const char *pred, int argi, intptr_t argl)
   { case ERR_INSTANTIATION:
       return PL_warning("%s: instantiation error on argument %d", pred, argi);
     case ERR_IO:
-    { 
+    {
 #ifdef __WINDOWS__
       char *msg;
       static WORD lang;
@@ -95,7 +95,7 @@ again:
       }
       PL_warning("%s: IO error %s", pred, msg);
       LocalFree(msg);
-      return FALSE;
+      return false;
 #else
       return PL_warning("%s: IO error %s", pred, strerror(argi));
 #endif

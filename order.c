@@ -43,10 +43,7 @@
 #include "order.h"
 #include "error.h"
 
-#ifndef TRUE
-#define TRUE 1
-#define FALSE 0
-#endif
+#include <stdbool.h>
 
 static void	exact_table(OrdTable ot);
 static void	case_insensitive_table(OrdTable ot);
@@ -126,17 +123,17 @@ register_table(OrdTable ot)
   { if ( tables[i] && tables[i]->name == ot->name )
     { free(tables[i]);
       tables[i] = ot;
-      return TRUE;
+      return true;
     } else if ( slot < 0 && !tables[i] )
       slot = i;
   }
 
   if ( slot >= 0 )
   { tables[slot] = ot;
-    return TRUE;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 
@@ -333,7 +330,7 @@ pl_new_order_table(term_t name, term_t options)
 	{ copy_table(t, from);
 	} else
 	{ free(t);
-	  return FALSE;
+	  return false;
 	}
       } else if ( arity == 1 )
       { fid_t fid = PL_open_foreign_frame();
@@ -352,7 +349,7 @@ pl_new_order_table(term_t name, term_t options)
 	if ( !PL_get_arg(1, head, c) || !get_char(c, &from) ||
 	     !PL_get_arg(2, head, c) || !get_char(c, &to) )
 	{ free(t);
-	  return FALSE;
+	  return false;
 	}
 
 	ORD(t, from) = to;
@@ -396,7 +393,7 @@ pl_order_table_mapping(term_t handle, term_t from, term_t to, control_t ctrl)
   int f;
 
   if ( !get_order_table(handle, &t) )
-    return FALSE;
+    return false;
 
   if ( PL_get_integer(from, &f) && f >= 0 && f <= 255 )
     return unify_mapped_code(to, ORD(t, f));
@@ -410,19 +407,19 @@ pl_order_table_mapping(term_t handle, term_t from, term_t to, control_t ctrl)
 	f = (int)PL_foreign_context(ctrl);
         break;
       case PL_PRUNED:
-	return TRUE;
+	return true;
     }
     while( f <= 255 && !unify_mapped_code(to, ORD(t, f)) )
       f++;
     if ( f <= 255 )
     { if ( !PL_unify_integer(from, f) )
-	return FALSE;
+	return false;
       PL_retry(f+1);
     }
-    return FALSE;
+    return false;
   }
 
-  return FALSE;
+  return false;
 }
 
 
@@ -438,10 +435,10 @@ get_order_table(term_t handle, OrdTable *t)
   if ( PL_get_atom(handle, &name) &&
        (ot = findOrdTable(name)) )
   { *t = ot;
-    return TRUE;
+    return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 
@@ -513,9 +510,9 @@ pl_compare_strings(term_t ord, term_t t1, term_t t2, term_t result)
   if ( !get_order_table(ord, &ot) )
     return error(ERR_INSTANTIATION, "compare_strings/4", 1, ord);
   if ( !PL_get_nchars(t1, &len, &s1, flags) )
-    return FALSE;
+    return false;
   if ( !PL_get_nchars(t2, &len, &s2, flags) )
-    return FALSE;
+    return false;
 
   rval = compare_strings(s1, s2, len, ot);
 
@@ -536,15 +533,15 @@ pl_prefix_string(term_t ord, term_t pre, term_t t2)
   if ( !get_order_table(ord, &ot) )
     return error(ERR_INSTANTIATION, "prefix_string/3", 1, ord);
   if ( !PL_get_nchars(pre, &l1, &s1, flags) )
-    return FALSE;
+    return false;
   if ( !PL_get_nchars(t2, &l2, &s2, flags) )
-    return FALSE;
+    return false;
 
   if ( l1 <= l2 &&
        compare_strings(s1, s2, l1, ot) == 0 )
-    return TRUE;
+    return true;
 
-  return FALSE;
+  return false;
 }
 
 
@@ -559,15 +556,15 @@ pl_prefix_string4(term_t ord, term_t pre, term_t post, term_t t2)
   if ( !get_order_table(ord, &ot) )
     return error(ERR_INSTANTIATION, "prefix_string/4", 1, ord);
   if ( !PL_get_nchars(pre, &l1, &s1, flags) )
-    return FALSE;
+    return false;
   if ( !PL_get_nchars(t2, &l2, (char**)&s2, flags) )
-    return FALSE;
+    return false;
 
   if ( l1 <= l2 &&
        compare_strings_(s1, &s2, l1, ot) == 0 )
     return PL_unify_atom_chars(post, s2);
 
-  return FALSE;
+  return false;
 }
 
 
@@ -582,16 +579,16 @@ pl_sub_string(term_t ord, term_t pre, term_t t2)
   if ( !get_order_table(ord, &ot) )
     return error(ERR_INSTANTIATION, "sub_string/3", 1, ord);
   if ( !PL_get_nchars(pre, &l1, &s1, flags) )
-    return FALSE;
+    return false;
   if ( !PL_get_nchars(t2, &l2, &s2, flags) )
-    return FALSE;
+    return false;
 
   for( ; l1+offset <= l2; offset++ )
   { if ( compare_strings(s1, s2+offset, l1, ot) == 0 )
-      return TRUE;
+      return true;
   }
 
-  return FALSE;
+  return false;
 }
 
 
