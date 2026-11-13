@@ -49,8 +49,8 @@ static void	exact_table(OrdTable ot);
 static void	case_insensitive_table(OrdTable ot);
 static void	iso_latin_1_table(OrdTable ot);
 static void	iso_latin_1_case_table(OrdTable ot);
-static int	register_table(OrdTable ot);
-static int	get_order_table(term_t handle, OrdTable *t);
+static bool	register_table(OrdTable ot);
+static bool	get_order_table(term_t handle, OrdTable *t);
 
 		 /*******************************
 		 *       PROLOG CONSTANTS	*
@@ -114,7 +114,7 @@ init_constants()
 
 static OrdTable tables[MAXTABLES];
 
-static int
+static bool
 register_table(OrdTable ot)
 { int i;
   int slot = -1;
@@ -372,7 +372,7 @@ pl_new_order_table(term_t name, term_t options)
 }
 
 
-static int
+static bool
 unify_mapped_code(term_t to, int ti)
 { switch(ti)
   { case ORD_BREAK:
@@ -427,7 +427,7 @@ pl_order_table_mapping(term_t handle, term_t from, term_t to, control_t ctrl)
 		 *        DEFAULT TABLES	*
 		 *******************************/
 
-static int
+static bool
 get_order_table(term_t handle, OrdTable *t)
 { atom_t name;
   OrdTable ot;

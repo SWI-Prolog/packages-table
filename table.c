@@ -235,7 +235,7 @@ init_constants()
 		 *	       ERRORS		*
 		 *******************************/
 
-static int
+static bool
 domain_error(term_t actual, const char *expected)
 { term_t ex;
 
@@ -252,7 +252,7 @@ domain_error(term_t actual, const char *expected)
 }
 
 
-static int
+static bool
 type_error(term_t actual, const char *expected)
 { term_t ex;
 
@@ -269,7 +269,7 @@ type_error(term_t actual, const char *expected)
 }
 
 
-static int
+static bool
 existence_error(term_t actual, const char *expected)
 { term_t ex;
 
@@ -285,7 +285,7 @@ existence_error(term_t actual, const char *expected)
 }
 
 
-static int
+static bool
 format_error(const char *pred, size_t pos, Field f)
 { char buf[1024];
 
@@ -301,7 +301,7 @@ format_error(const char *pred, size_t pos, Field f)
 		 *	 HIGH-LEVEL GET-*	*
 		 *******************************/
 
-static int
+static bool
 get_size_ex(term_t t, size_t *v)
 { int64_t i;
 
@@ -317,7 +317,7 @@ get_size_ex(term_t t, size_t *v)
 }
 
 
-static int
+static bool
 get_offset_ex(term_t t, table_offset_t *v)
 { int64_t i;
 
@@ -373,7 +373,7 @@ get_type(atom_t typename, int *type)
 }
 
 
-static int
+static bool
 get_field_flag(atom_t name, term_t arg, Field field)
 { if ( name == ATOM_sorted )
   { field->flags |= FIELD_SORTED;
@@ -1185,7 +1185,7 @@ found:
 		 *       READING RECORDS	*
 		 *******************************/
 
-static int
+static bool
 field_boundaries(Table t, Field f, table_offset_t start,
 		 char **sf, char **zf, table_offset_t *next)
 { char *s = t->window + start;
@@ -1296,7 +1296,7 @@ tab_memcpy(Table table, int flags, char *to, const char *from, size_t len)
 }
 
 
-static int
+static bool
 unify_field_text(Table t, int flags, int type,
 		 term_t arg, const char *s, size_t len)
 { char *tmp;
@@ -1332,7 +1332,7 @@ unify_field_text(Table t, int flags, int type,
 
 
 
-static int
+static bool
 read_field(Table t, Field f, table_offset_t start, table_offset_t *end, term_t arg)
 { char *s, *z;
   int type;
@@ -1410,7 +1410,7 @@ read_field(Table t, Field f, table_offset_t start, table_offset_t *end, term_t a
 }
 
 
-static int
+static bool
 read_record(Table t, table_offset_t start, table_offset_t *end, term_t record)
 { int n;
   Field f;
@@ -1907,7 +1907,7 @@ field structures for a redo in pl_in_table().   No  checking needs to be
 done as the initial call has already done that.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-static int
+static bool
 rebind_query_vars(Query q, term_t from)
 { if ( q->nvars > 0 )
   { term_t tail = PL_copy_term_ref(from);
@@ -2060,7 +2060,7 @@ make_query(Table t, term_t from)
 }
 
 
-static int
+static bool
 unique_match(Query q)
 { int i;
   QueryField qf = q->field;
